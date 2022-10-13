@@ -51,6 +51,7 @@ INTEGER = ('Color', 'NumPts', 'Draw', 'Regis',
            'DE12-SensorModuleSerialNumber',
            'DE12-SensorReadoutDelay(ms)',
            'DE12-IgnoredFramesInSummedImage',
+           'FitToPolygonID',
            )
 
 # float
@@ -65,6 +66,8 @@ FLOAT = ('MapExposure', 'MapIntensity', 'MapTiltAngle', 'MapSettling',
          'DE12-ServerSoftwareVersion',
          'DE12-PreexposureTime(s)',
          'DE12-FaradayPlatePeakReading(pA/cm2)',
+         'PtsZ',
+         'ShiftY',
          )
 
 # str
