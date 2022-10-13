@@ -21,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='pyserialem',
-    version='0.3.2',
+    version='0.3.3',
     description='Python module to read/write SerialEM .nav files.',
     python_requires='>=3.6.1',
     project_urls={
