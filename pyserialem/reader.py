@@ -51,7 +51,94 @@ INTEGER = ('Color', 'NumPts', 'Draw', 'Regis',
            'DE12-SensorModuleSerialNumber',
            'DE12-SensorReadoutDelay(ms)',
            'DE12-IgnoredFramesInSummedImage',
+           # other 
            'FitToPolygonID',
+           'ShiftCohortID',
+           'MontParamIndex',
+           'FilePropIndex', 
+           'XFrame',
+           'YFrame',
+           'XNframes',
+           'YNframes',
+           'XOverlap',
+           'YOverlap',
+           'OverviewBinning',
+           'OfferToMakeMap',
+           'AdjustFocus',
+           'CorrectDrift',
+           'FousAfterStage',
+           'RepeatFocus',
+           'DriftLimit',
+           'ShowOverview',
+           'FocusAfterStage',
+           'ShiftInOverview',
+           'VerySloppy',
+           'NumToSkip',
+           'IgnoreSkipList',
+           'InsideNavItem',
+           'SkipOutsidePoly',
+           'WasFitToPolygon',
+           'UseMontMapParams',
+           'UseViewInLowDose',
+           'SetupInLowDose',
+           'UseContinuousMode',
+           'UseSearchInLowDose',
+           'NoDriftCorr',
+           'NoHQDriftCorr',
+           'UseHqParams',
+           'FocusInBlocks',
+           'RealignToPiece',
+           'RealignInterval',
+           'HqDelayTime',
+           'ISrealign',
+           'MaxRealignIS',
+           'UseAnchorWithIS',
+           'AnchorMagInd',
+           'SkipCorrelations',
+           'SkipRecReblanks',
+           'FullMontStageX',
+           'FullMontStageY',
+           'RefCount',
+           'NavID',
+           'Mode',
+           'UseSearchInLowDose',
+           'NoDriftCorr',
+           'NoHQDriftCorr',
+           'UseHqParams',
+           'FocusInBlocks',
+           'FocusBlockSize',
+           'RealignToPiece',
+           'RealignInterval',
+           'HqDelayTime',
+           'ISrealign',
+           'MaxRealignIS',
+           'UseAnchorWithIS',
+           'AnchorMagInd',
+           'SkipCorrelations',
+           'SkipRecReblanks',
+           'ForFullMontage',
+           'FullMontStageX',
+           'FullMontStageY',
+           'RefCount',
+           'NavID',
+           'Mode',
+           'Typext',
+           'MaxSec',
+           'UseMdoc',
+           'MontageInMdoc',
+           'UnsignOpt',
+           'SignToUnsignOpt',
+           'FileType',
+           'Compression',
+           'HdfCompression',
+           'JpegQuality',
+           'TIFFallowed',
+           'SeparateForMont',
+           'MontUseMdoc',
+           'MontFileType',
+           'LeaveExistingMdoc',
+           'FromMag',
+           'ToMag'
            )
 
 # float
@@ -68,13 +155,18 @@ FLOAT = ('MapExposure', 'MapIntensity', 'MapTiltAngle', 'MapSettling',
          'DE12-FaradayPlatePeakReading(pA/cm2)',
          'PtsZ',
          'ShiftY',
+         'ShiftX',
+         'PctTruncHi',
+         'MaxAlignFrac',
+         'ContinDelayFactor',
+         'PctTruncLo',
          )
 
 # str
 STRING = ('MapFile', 'Note',
           # .mdoc
           'DateTime', 'ImageFile', 'NavigatorLabel',
-          'SubFramePath', 'ChannelName',
+          'SubFramePath', 'ChannelName', 'FileToOpen'
           )
 
 # list, float
@@ -90,6 +182,8 @@ FLOAT_LIST = ('StageXYZ', 'RawStageXY', 'MapScaleMat', 'XYinPc',
               'FilterSlitAndLoss',
               # external
               'CoordsInMap', 'CoordsInAliMont', 'CoordsInAliMontVS', 'CoordsInPiece',
+              # other
+              'MarkerShift',
               )
 
 # list, int
@@ -329,6 +423,30 @@ class NavItem:
         """Return color as string."""
         return ('red', 'green', 'blue', 'yellow', 'magenta', 'black')[self.Color]
 
+class OtherItem:
+    '''Adds some extra'''
+    def __init__(self, d: dict, tag: str):
+        super().__init__()
+        # if not "MapID" in d:
+        #     d["MapID"] = NavItem.MAP_ID_ITERATOR
+        #     NavItem.MAP_ID_ITERATOR += 1
+
+        self._keys = tuple(d.keys())
+        self.kind = 'Other'
+        self.Type = 100
+
+        self.DrawnID = 0
+        self.Acquire = 0
+        self.__dict__.update(d)
+
+        if not tag:
+            tag = f'Item-{NavItem.TAG_ID_ITERATOR}'
+            NavItem.TAG_ID_ITERATOR += 1
+
+        self.tag = tag
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.kind}[Item = {self.tag}])'
 
 class MapItem(NavItem):
     """Adds some extra methods for map items."""
@@ -650,6 +768,8 @@ def block2dict(block: list, kind: str = None, sequence: int = -1) -> dict:
                 print(item)
             else:
                 print('Unknown item:', item)
+                print('Unknown item key:', key)
+                print('Unknown item value:', value)
         except Exception as e:
             print(e)
             print(item)
@@ -670,13 +790,14 @@ def block2nav(block: list, tag: str = None, data_drc: str = None) -> 'NavItem':
     """Takes a text block from a SerialEM .nav file and converts it into a
     instance of `NavItem` or `MapItem`"""
     d = block2dict(block)
-    kind = d['Type']
-
-    if kind == 2:
-        ret = MapItem(d, tag=tag, data_drc=data_drc)
+    if 'Type' in d:
+        kind = d['Type']
+        if kind == 2:
+            ret = MapItem(d, tag=tag, data_drc=data_drc)
+        else:
+            ret = NavItem(d, tag=tag)
     else:
-        ret = NavItem(d, tag=tag)
-
+        ret = OtherItem(d, tag=tag)
     return ret
 
 
@@ -689,7 +810,7 @@ def read_nav_file(fn: str, acquire_only: bool = False) -> list:
     """
 
     # https://regex101.com/
-    patt_match = re.compile(r'\[Item\s?=\s?([a-zA-Z0-9_-]*)\]')
+    patt_match = re.compile(r'(\[Item|\[BaseMarkerShift|\[MontParam|\[FileOptions)\s?=\s?([a-zA-Z0-9_-]*)\]')
 
     capture = False
     block = []
@@ -706,11 +827,12 @@ def read_nav_file(fn: str, acquire_only: bool = False) -> list:
         m = re.match(patt_match, line)
 
         if m:
+            # 每次匹配到item，接下来的一部分是一个block
             if block:
                 items.append(block2nav(block, tag=tag, data_drc=drc))
 
             # prep for next block
-            tag = m.groups()[0]
+            tag = m.groups()[1]
             block = []
             capture = True
         elif capture:
