@@ -37,6 +37,7 @@ INTEGER = ('Color', 'NumPts', 'Draw', 'Regis',
            'Magnification', 'ProbeMode', 'MoveStage',
            'Alpha', 'ImageSize', 'DataMode', 'Montage',
            'ImageSeries', 'UsingCDS', 'LowDoseConSet', 'NumSubFrames',
+           'OperatingMode',
            # other
            'Corner', 'Imported', 'K2ReadMode', 'MapAlpha',
            'PolyID', 'RealignReg', 'RealignedID', 'RegPt',
@@ -160,6 +161,7 @@ FLOAT = ('MapExposure', 'MapIntensity', 'MapTiltAngle', 'MapSettling',
          'MaxAlignFrac',
          'ContinDelayFactor',
          'PctTruncLo',
+         'FocusOffset',
          )
 
 # str
@@ -183,7 +185,7 @@ FLOAT_LIST = ('StageXYZ', 'RawStageXY', 'MapScaleMat', 'XYinPc',
               # external
               'CoordsInMap', 'CoordsInAliMont', 'CoordsInAliMontVS', 'CoordsInPiece',
               # other
-              'MarkerShift',
+              'MarkerShift', 'NetViewShifts', 
               )
 
 # list, int
@@ -192,6 +194,7 @@ INTEGER_LIST = ('MapWidthHeight', 'MapFramesXY',
                 'PieceCoordinates', 'AlignedPieceCoordsVS',
                 'AlignedPieceCoords', 'MontBacklash',
                 'ValidBacklash', 'CameraModes', 'FilterState',
+                'ViewBeamShifts', 'ViewBeamTilts',
                 'ConSetUsed', 'MultishotHoleAndPosition',
                 # other
                 'HoleArray', 'LDAxisAngle', 'SkipHoles',
