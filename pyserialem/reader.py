@@ -139,7 +139,7 @@ INTEGER = ('Color', 'NumPts', 'Draw', 'Regis',
            'MontFileType',
            'LeaveExistingMdoc',
            'FromMag',
-           'ToMag'
+           'ToMag', 'ViewDefocus', 'FitToPolyID',
            )
 
 # float
@@ -162,6 +162,7 @@ FLOAT = ('MapExposure', 'MapIntensity', 'MapTiltAngle', 'MapSettling',
          'ContinDelayFactor',
          'PctTruncLo',
          'FocusOffset',
+         'DoseRate',
          )
 
 # str
@@ -185,7 +186,7 @@ FLOAT_LIST = ('StageXYZ', 'RawStageXY', 'MapScaleMat', 'XYinPc',
               # external
               'CoordsInMap', 'CoordsInAliMont', 'CoordsInAliMontVS', 'CoordsInPiece',
               # other
-              'MarkerShift', 'NetViewShifts', 
+              'MarkerShift', 'NetViewShifts', 'FullMontSize', 'FullMontNumFrames',
               )
 
 # list, int
