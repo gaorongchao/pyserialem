@@ -870,7 +870,7 @@ def read_nav_file(fn: str, acquire_only: bool = False) -> list:
     return items
 
 
-def write_nav_file(fn: str, items, mode='w') -> None:
+def write_nav_file(fn: str, *items, mode='w') -> None:
     """Write list of nav items to a navigator file with filename `fn` to be
     read by SerialEM.
 
